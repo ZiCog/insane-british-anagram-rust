@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+        <!-- Bootstrap Cyborg theme CSS -->
+        <link rel="stylesheet" href="bootstrap.min.css" media="screen">
+
+        <title>Insane British Anagram</title>
+    </head>
+
+    <body>
+        <div class="container">
+            <h2 class="text-center">Insane British Anagram</h2>
+            <p class="text-center">(Using Rust and WASM)
+            <p>This page finds all the anagrams in the british-english-insane dictionary as found in Debian.</p>
+
+            <div id="status" style="overflow-wrap: break-word"></div>
+            <div id="anagrams" style="overflow-wrap: break-word"></div>
+
+            <!-- Note the usage of `type=module` here as this is an ES6 module -->
+            <script type="module">
+
+                function pluralize(word, number) {
+                    if (number != 1) {
+                        return word + "s"
+                    } else {
+                        return word
+                    }
+                }
+
+                // Use ES module import syntax to import functionality from the module
+                // that we have compiled.
+                //
+                // Note that the `default` import is an initialization function which
+                // will "boot" the module and make it ready to use. Currently browsers
+                // don't support natively imported WebAssembly as an ES module, but
+                // eventually the manual initialization won't be required!
+                import init, { anagrams_html } from './insane-british-anagram.js';
+
+                $("#status").html("Downloading dictionary...");
+                async function run() {
+                    // First up we need to actually load the wasm file, so we use the
+                    // default export to inform it where the wasm file is located on the
+                    // server, and then we wait on the returned promise to wait for the
+                    // wasm to be loaded.
+                    // It may look like this: `await init('./pkg/without_a_bundler_bg.wasm');`,
+                    // but there is also a handy default inside `init` function, which uses
+                    // `import.meta` to locate the wasm file relatively to js file
+                    //
+                    // Note that instead of a string here you can also pass in an instance
+                    // of `WebAssembly.Module` which allows you to compile your own module.
+                    // Also note that the promise, when resolved, yields the wasm module's
+                    // exports which is the same as importing the `*_bg` module in other
+                    // modes
+                    await init();
+
+                    // And afterwards we can use all the functionality defined in wasm.
+                    fetch("british-english-insane.txt") // Call the fetch function passing the url of the API as a parameter
+                    .then((resp) => {
+                        if (!resp.ok) throw Error(resp.statusText)
+                        return resp.text() // Transform the data into text
+                    })
+                    .then(function(text) {
+                        // Your code for handling the data you get from the API
+                        $("#status").append(" OK<br>Finding anagrams...");
+                        setTimeout(function() {
+                            let t0 = performance.now();
+                            const res = anagrams_html(text);
+                            let t1 = performance.now();
+                            let time = Math.floor(t1 - t0)
+                            $("#status").append(" OK<br>");
+                            $("#status").append(`WASM execution time: ${time} ${pluralize("millisecond", time)}.<br><br>`);
+                            $("#anagrams").html(res);
+                        }, 1);
+                    })
+                    .catch(function(err) {
+                        // This is where you run code if the server returns any errors
+                        $("#status").append(" FAIL.<br>" + err);
+                    });
+                }
+                run();
+            </script>
+        </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    </body>
+</html>
+

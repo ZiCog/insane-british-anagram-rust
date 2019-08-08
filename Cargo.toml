@@ -1,0 +1,48 @@
+[package]
+name = "insane-british-anagram"
+version = "0.1.0"
+authors = ["zicog <zicog@example.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+[dependencies]
+typename = "0.1.1"
+microbench = "0.5.0"
+time = "0.1"
+wasm-bindgen = "0.2.48"
+
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  'CanvasRenderingContext2d',
+  'CssStyleDeclaration',
+  'Document',
+  'Element',
+  'EventTarget',
+  'HtmlCanvasElement',
+  'HtmlElement',
+  'MouseEvent',
+  'Node',
+  'Window',
+]
+
+
+
+[profile.dev]
+opt-level = 0
+
+[profile.release]
+opt-level = 3
+
+
+[features]
+# no features by default
+default = []
+
+# Add feature "foo" here, then you can use it. 
+# Our "web" feature depends on nothing else.
+web = []
+
