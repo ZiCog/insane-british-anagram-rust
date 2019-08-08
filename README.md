@@ -3,6 +3,17 @@ Rust program to find anagrams in the Debian british-english-insane dictionary fi
 
 This is my first ever Rust program. You will find a number of different attempts at it here. By default it builds the latest fastest incarnation.
 
+
+
+## Prerequisits
+
+    $ sudo apt-get install curl
+    $ sudo apt-get install libssl-dev
+    $ curl https://sh.rustup.rs -sSf | sh
+    $ source $HOME/.cargo/env
+    $ cargo install wasm-bindgen-cli
+    $ rustup target add wasm32-unknown-unknown
+
 ## Build
 
 The build.sh script will build the anagram finder as a native executable and as WASM for node.js and the web.
@@ -29,7 +40,7 @@ As a web page:
 
     $ python3 server.py
     
-And visit http://localhost:8080/www/
+And visit http://localhost:9000/www/
 
 ## WTF ?!!
 
