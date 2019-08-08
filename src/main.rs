@@ -210,25 +210,25 @@ fn main() {
         Ok(()) => {
 
             let mut start = Instant::now();
-            let mut output = anagrams(&dictionary);
+            let mut output1 = anagrams(&dictionary);
             let mut end = Instant::now();
             let mut elapsed = end - start;
             eprintln!("{}ms", elapsed.as_nanos() / 1000_000);
 
-            let stdout = io::stdout();
-            let mut stdout_handle = stdout.lock();
-            match stdout_handle.write_all(output.as_bytes()) {
-                Ok(()) => {}
-                Err(e) => eprintln!("Error writing reult {}", e),
-            }
-
             start = Instant::now();
-            output = anagrams(&dictionary);
+            let output2 = anagrams(&dictionary);
             end = Instant::now();
             elapsed = end - start;
             eprintln!("{}ms", elapsed.as_nanos() / 1000_000);
 
-            match stdout_handle.write_all(output.as_bytes()) {
+            let stdout = io::stdout();
+            let mut stdout_handle = stdout.lock();
+            match stdout_handle.write_all(output1.as_bytes()) {
+                Ok(()) => {}
+                Err(e) => eprintln!("Error writing reult {}", e),
+            }
+
+            match stdout_handle.write_all(output2.as_bytes()) {
                 Ok(()) => {}
                 Err(e) => eprintln!("Error writing reult {}", e),
             }
