@@ -152,13 +152,13 @@ static PRIMES: [u8; 26] = [
 pub fn anagrams(dictionary: &[u8]) -> String {
     // Container for sets of anagrams
     // An anagram set is simply an array of offets into the anagram_sets array
-    let mut anagram_map: HashMap<u64, usize> = HashMap::new();
+    let mut anagram_map = HashMap::with_capacity(376877);
 
     // Vector of AnagramSets
-    let mut anagram_sets: Vec<AnagramSet> = Vec::new();
+    let mut anagram_sets = Vec::with_capacity(376877);
 
     // An ordered index of anagram set keys
-    let mut index: Vec<u64> = Vec::new();
+    let mut index = Vec::with_capacity(376877);
 
     find_anagrams(&mut index, &mut anagram_map, &mut anagram_sets, &dictionary);
     let output: String = output_anagrams(&index, &anagram_map, &anagram_sets, &dictionary);
