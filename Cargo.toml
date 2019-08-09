@@ -1,6 +1,6 @@
 [package]
 name = "insane-british-anagram"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["zicog <zicog@example.com>"]
 edition = "2018"
 
@@ -8,6 +8,7 @@ edition = "2018"
 
 
 [dependencies]
+hashbrown = "0.5"
 typename = "0.1.1"
 microbench = "0.5.0"
 time = "0.1"

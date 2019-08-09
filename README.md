@@ -46,6 +46,19 @@ And visit http://localhost:9000/www/
 
 Do you notice the execution times above? How is it possible that it runs faster when built as WASM than as a native x86-64 executable.
 
+## Tags
+
+v0.1.1  Swapped HashMap to Google's HashBrown
+
+    $ ./target/release/insane-british-anagram > anagrams.txt
+    450ms
+    429ms
+    $ cd nodejs/
+    $ node index.js > anagrams.txt
+    517ms
+    213ms
+
+
 
 
 

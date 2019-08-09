@@ -11,10 +11,11 @@
 //           https://users.rust-lang.org/t/writing-a-213-byte-webassembly-graphics-demo-with-rust/29099
 //           http://cliffle.com/blog/bare-metal-wasm/
 
-use std::collections::HashMap;
+//use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 use std::io::{self, Write};
+use hashbrown::HashMap;             // Google's faster HashMap
 use std::time::{Duration, Instant};
 use wasm_bindgen::prelude::*;
 
