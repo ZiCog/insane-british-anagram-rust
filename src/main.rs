@@ -1,8 +1,6 @@
 //
-// insane-british-anagram-4.rs - Find words that have valid anagrams
-//                               Words sourced from Debian's british-english-insane dictionary
-//
-// heater - 2019-08-05
+// insane-british-anagram.rs - Find words that have valid anagrams
+//                             Words sourced from Debian's british-english-insane dictionary
 //
 // WARNING: This is not a good solution. Only a crazy experiment in trying to write Rust like C.
 //          It's verbose, complex but marginally faster.
@@ -10,8 +8,6 @@
 // LOOK AT:  Bare Metal WASM by Cliff L Biffle:
 //           https://users.rust-lang.org/t/writing-a-213-byte-webassembly-graphics-demo-with-rust/29099
 //           http://cliffle.com/blog/bare-metal-wasm/
-
-//use std::collections::HashMap;
 
 use std::io::{self, Write};
 use hashbrown::HashMap;             // Google's faster HashMap
