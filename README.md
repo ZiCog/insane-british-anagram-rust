@@ -58,6 +58,14 @@ v0.1.1  Swapped HashMap to Google's HashBrown
     517ms
     213ms
 
+v0.1.2 Optimizations by kornelski
+
+    $ ./target/release/insane-british-anagram > anagrams.txt
+    328ms
+    326ms
+    $ node index.js > anagrams.txt
+    490ms
+    324ms
 
 
 
