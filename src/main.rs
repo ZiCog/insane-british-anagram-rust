@@ -12,8 +12,6 @@
 //           http://cliffle.com/blog/bare-metal-wasm/
 
 //use std::collections::HashMap;
-use std::fs::File;
-use std::io::Read;
 use std::io::{self, Write};
 use hashbrown::HashMap;             // Google's faster HashMap
 use std::time::{Duration, Instant};
@@ -44,11 +42,6 @@ impl AnagramSet {
     }
 }
 
-fn read_insane_british_dictionary(mut dictionary: &mut Vec<u8>) -> std::io::Result<()> {
-    let mut file = File::open("/usr/share/dict/british-english-insane")?;
-    file.read_to_end(&mut dictionary)?;
-    Ok(())
-}
 
 fn is_lower_case(c: u8) -> bool {
     !(((c as char) < 'a') || ((c as char) > 'z'))
@@ -204,11 +197,9 @@ pub fn start() -> Result<(), JsValue> {
 }
 
 fn main() {
-    let mut dictionary = Vec::new();
-
-    match read_insane_british_dictionary(&mut dictionary) {
+    match std::fs::read("/usr/share/dict/british-english-insane") {
         // Takes 25ms on PC
-        Ok(()) => {
+        Ok(dictionary) => {
 
             let mut start = Instant::now();
             let mut output1 = anagrams(&dictionary);
