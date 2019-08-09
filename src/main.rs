@@ -12,12 +12,12 @@
 //           http://cliffle.com/blog/bare-metal-wasm/
 
 //use std::collections::HashMap;
-use std::fs::File;
-use std::io::Read;
+
 use std::io::{self, Write};
 use hashbrown::HashMap;             // Google's faster HashMap
 use std::time::{Duration, Instant};
 use wasm_bindgen::prelude::*;
+use arrayvec::ArrayVec;
 
 #[derive(Copy, Clone)]
 struct SliceSpec {
@@ -25,33 +25,22 @@ struct SliceSpec {
     end: usize,
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone)]
 struct AnagramSet {
-    word_slices: [SliceSpec; 17],
-    size: usize,
+    word_slices: ArrayVec<[SliceSpec; 17]>,
 }
 
 impl AnagramSet {
     fn new(word: SliceSpec) -> AnagramSet {
+        let mut word_slices = ArrayVec::new();
+        word_slices.push(word);
         AnagramSet {
-            word_slices: [word; 17],
-            size: 1,
+            word_slices,
         }
     }
     fn push(&mut self, slice: SliceSpec) {
-        self.word_slices[self.size] = slice;
-        self.size += 1;
+        self.word_slices.push(slice);
     }
-}
-
-fn read_insane_british_dictionary(mut dictionary: &mut Vec<u8>) -> std::io::Result<()> {
-    let mut file = File::open("/usr/share/dict/british-english-insane")?;
-    file.read_to_end(&mut dictionary)?;
-    Ok(())
-}
-
-fn is_lower_case(c: u8) -> bool {
-    !(((c as char) < 'a') || ((c as char) > 'z'))
 }
 
 #[cfg(not(feature = "web"))]
@@ -74,17 +63,16 @@ fn output_anagrams(
 ) -> String {
     let mut output: String = std::string::String::from("");
     for hash in index {
-        if let Some(anagram_sets_count) = anagram_map.get(&hash) {
-            let size = anagram_sets[*anagram_sets_count as usize].size;
+        if let Some(anagram_sets_idx) = anagram_map.get(hash).copied() {
+            let size = anagram_sets[anagram_sets_idx as usize].word_slices.len();
             if size > 1 {
                 let mut separator = "";
-                for i in 0..size {
-                    let begin = anagram_sets[*anagram_sets_count].word_slices[i].begin;
-                    let end = anagram_sets[*anagram_sets_count].word_slices[i].end;
-                    let slice = &dictionary[begin..end];
-                    let word = String::from_utf8_lossy(&slice).to_string();
+                for (i, slice) in anagram_sets[anagram_sets_idx as usize].word_slices.iter().enumerate() {
+                    let begin = slice.begin;
+                    let end = slice.end;
+                    let word = &dictionary[begin..end];
                     output += separator;
-                    output += &word;
+                    output += &String::from_utf8_lossy(word);
 
                     if i == 0 {
                         separator = ": ";
@@ -105,19 +93,18 @@ fn find_anagrams(
     anagram_sets: &mut Vec<AnagramSet>,
     dictionary: &[u8],
 ) {
-    let mut anagram_sets_count: usize = 0;
     let mut word_index = 0;
     let mut character_index = 0;
     let mut reject = false;
     let mut hash: u64 = 1;
 
-    for c in dictionary {
-        if is_lower_case(*c) {
+    for &c in dictionary {
+        if c.is_ascii_lowercase() {
             // We are scanning a valid word
-            let prime_index = (*c - 97) as usize;
+            let prime_index = (c - b'a') as usize;
             hash = hash.wrapping_mul(PRIMES[prime_index].into());
             character_index += 1;
-        } else if *c as char == '\n' {
+        } else if c == b'\n' {
             // We have hit the end of a word, use the word if it's valid
             if !reject {
                 // Do we have a word with this key (potential anagram)?
@@ -125,19 +112,18 @@ fn find_anagrams(
                     begin: word_index,
                     end: character_index,
                 };
-                match anagram_map.get_mut(&hash) {
-                    Some(anagram_sets_count) => {
+                match anagram_map.get_mut(&hash).copied() {
+                    Some(idx) => {
                         // Found: Append it to the existing anagram set
-                        anagram_sets[*anagram_sets_count].push(word_spec);
+                        anagram_sets[idx].push(word_spec);
                     }
                     None => {
                         // Not found: Add it to the map as start of new anagram set.
                         // Make a new anagram set with one word in it.
                         let anagram_set = AnagramSet::new(word_spec);
                         // Add the new anagram set to our list of anagram sets
+                        anagram_map.insert(hash, anagram_sets.len());
                         anagram_sets.push(anagram_set);
-                        anagram_map.insert(hash, anagram_sets_count);
-                        anagram_sets_count += 1;
 
                         // And add the new anagram set to index
                         index.push(hash);
@@ -166,13 +152,13 @@ static PRIMES: [u8; 26] = [
 pub fn anagrams(dictionary: &[u8]) -> String {
     // Container for sets of anagrams
     // An anagram set is simply an array of offets into the anagram_sets array
-    let mut anagram_map: HashMap<u64, usize> = HashMap::new();
+    let mut anagram_map = HashMap::with_capacity(376877);
 
     // Vector of AnagramSets
-    let mut anagram_sets: Vec<AnagramSet> = Vec::new();
+    let mut anagram_sets = Vec::with_capacity(376877);
 
     // An ordered index of anagram set keys
-    let mut index: Vec<u64> = Vec::new();
+    let mut index = Vec::with_capacity(376877);
 
     find_anagrams(&mut index, &mut anagram_map, &mut anagram_sets, &dictionary);
     let output: String = output_anagrams(&index, &anagram_map, &anagram_sets, &dictionary);
@@ -204,14 +190,12 @@ pub fn start() -> Result<(), JsValue> {
 }
 
 fn main() {
-    let mut dictionary = Vec::new();
-
-    match read_insane_british_dictionary(&mut dictionary) {
+    match std::fs::read("/usr/share/dict/british-english-insane") {
         // Takes 25ms on PC
-        Ok(()) => {
+        Ok(dictionary) => {
 
             let mut start = Instant::now();
-            let mut output1 = anagrams(&dictionary);
+            let output1 = anagrams(&dictionary);
             let mut end = Instant::now();
             let mut elapsed = end - start;
             eprintln!("{}ms", elapsed.as_nanos() / 1000_000);
