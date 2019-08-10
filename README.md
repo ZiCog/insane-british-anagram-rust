@@ -67,6 +67,32 @@ v0.1.2 Optimizations by kornelski
     490ms
     324ms
 
+## Timings on a Raspberry Pi 3 and Buster:
+
+v0.1.0 Using std HashMap:
+
+    $ ./target/release/insane-british-anagram > anagrams.txt
+    729ms
+    717ms
+
+v0.1.1 Using Goggle's HashBrown:
+
+    $ ./target/release/insane-british-anagram > anagrams.txt
+    606ms
+    583ms
+
+v0.1.2 Using ArrayVec instead of std::Vector and optimizations by kornelski:
+
+    $ ./target/release/insane-british-anagram > anagrams.txt
+    664ms
+    639ms
+
+v0.1.3 Using jemallocator:
+
+    $ time target/release/insane-british-anagram > anagrams.txt
+    664ms
+    571ms
+
 
 
 
