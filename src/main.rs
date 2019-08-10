@@ -2,12 +2,17 @@
 // insane-british-anagram.rs - Find words that have valid anagrams
 //                             Words sourced from Debian's british-english-insane dictionary
 //
-// WARNING: This is not a good solution. Only a crazy experiment in trying to write Rust like C.
-//          It's verbose, complex but marginally faster.
+// WARNING: This perhaps not the most readble way to write this algorithm, but it's fast!
+//
+// See: Bare Metal WASM by Cliff L Biffle:
+//      https://users.rust-lang.org/t/writing-a-213-byte-webassembly-graphics-demo-with-rust/29099
+//      http://cliffle.com/blog/bare-metal-wasm/
 
-// LOOK AT:  Bare Metal WASM by Cliff L Biffle:
-//           https://users.rust-lang.org/t/writing-a-213-byte-webassembly-graphics-demo-with-rust/29099
-//           http://cliffle.com/blog/bare-metal-wasm/
+#[cfg(unix)]
+extern crate jemallocator;
+#[cfg(unix)]
+#[global_allocator]
+static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
 use std::io::{self, Write};
 use hashbrown::HashMap;             // Google's faster HashMap
