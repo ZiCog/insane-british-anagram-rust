@@ -33,6 +33,10 @@ path = "src/insane-british-anagram-5.rs"
 name = "insane-british-anagram"
 path = "src/main.rs"
 
+[[bin]]
+name = "insaneHTTP"
+path = "src/insaneHTTP.rs"
+
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 
