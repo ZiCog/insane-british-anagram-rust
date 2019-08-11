@@ -9,6 +9,7 @@ This is my first ever Rust program. You will find a number of different attempts
 
     $ sudo apt-get install curl
     $ sudo apt-get install libssl-dev
+    $ sudo apt-get install make
     $ curl https://sh.rustup.rs -sSf | sh
     $ source $HOME/.cargo/env
     $ cargo install wasm-bindgen-cli
