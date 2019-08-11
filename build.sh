@@ -3,7 +3,7 @@
 # Build for host platform.
 cargo build --release 
 strip  target/release/iba-?
-strip  target/release/iba
+strip  target/release/insane-british-anagram
 
 # Build for WASM on the web
 cargo build --target  wasm32-unknown-unknown --features "web" --release
