@@ -14,11 +14,11 @@ extern crate jemallocator;
 #[global_allocator]
 static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
 
+use arrayvec::ArrayVec;
+use hashbrown::HashMap; // Google's faster HashMap
 use std::io::{self, Write};
-use hashbrown::HashMap;             // Google's faster HashMap
 use std::time::{Duration, Instant};
 use wasm_bindgen::prelude::*;
-use arrayvec::ArrayVec;
 
 #[derive(Copy, Clone)]
 struct SliceSpec {
@@ -35,9 +35,7 @@ impl AnagramSet {
     fn new(word: SliceSpec) -> AnagramSet {
         let mut word_slices = ArrayVec::new();
         word_slices.push(word);
-        AnagramSet {
-            word_slices,
-        }
+        AnagramSet { word_slices }
     }
     fn push(&mut self, slice: SliceSpec) {
         self.word_slices.push(slice);
@@ -68,7 +66,11 @@ fn output_anagrams(
             let size = anagram_sets[anagram_sets_idx as usize].word_slices.len();
             if size > 1 {
                 let mut separator = "";
-                for (i, slice) in anagram_sets[anagram_sets_idx as usize].word_slices.iter().enumerate() {
+                for (i, slice) in anagram_sets[anagram_sets_idx as usize]
+                    .word_slices
+                    .iter()
+                    .enumerate()
+                {
                     let begin = slice.begin;
                     let end = slice.end;
                     let word = &dictionary[begin..end];
@@ -194,27 +196,15 @@ fn main() {
     match std::fs::read("/usr/share/dict/british-english-insane") {
         // Takes 25ms on PC
         Ok(dictionary) => {
-
             let mut start = Instant::now();
-            let output1 = anagrams(&dictionary);
+            let output = anagrams(&dictionary);
             let mut end = Instant::now();
             let mut elapsed = end - start;
             eprintln!("{}ms", elapsed.as_nanos() / 1000_000);
 
-            start = Instant::now();
-            let output2 = anagrams(&dictionary);
-            end = Instant::now();
-            elapsed = end - start;
-            eprintln!("{}ms", elapsed.as_nanos() / 1000_000);
-
             let stdout = io::stdout();
             let mut stdout_handle = stdout.lock();
-            match stdout_handle.write_all(output1.as_bytes()) {
-                Ok(()) => {}
-                Err(e) => eprintln!("Error writing reult {}", e),
-            }
-
-            match stdout_handle.write_all(output2.as_bytes()) {
+            match stdout_handle.write_all(output.as_bytes()) {
                 Ok(()) => {}
                 Err(e) => eprintln!("Error writing reult {}", e),
             }

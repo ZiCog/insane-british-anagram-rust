@@ -3,16 +3,16 @@
 //                               Words sourced from Debian's british-english-insane dictionary
 //
 // heater - 2019-07-30
-// 
+//
 
 #![allow(non_snake_case)]
 
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::{self, Write};
-use std::collections::HashMap;
-use std::io::{BufReader,BufRead};
+use std::io::{BufRead, BufReader};
 
-fn validWord (word : &String) -> bool {
+fn validWord(word: &String) -> bool {
     let bytes = word.as_bytes();
     for c in bytes {
         if (*c < 'a' as u8) || (*c > 'z' as u8) {
@@ -22,9 +22,12 @@ fn validWord (word : &String) -> bool {
     return true;
 }
 
-fn primeHash (word: &String) -> u64 {
+fn primeHash(word: &String) -> u64 {
     // One prime number for each lower case letter of the alphabet
-    let primes: [u64; 26] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101];
+    let primes: [u64; 26] = [
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
+        97, 101,
+    ];
 
     let slice = word.as_bytes();
     let mut hash: u64 = 1;
@@ -42,10 +45,10 @@ fn main() {
     // All the words read from the dictionary
     let mut words: Vec<String> = Vec::new();
 
-    // Map container for sets of anagrams 
+    // Map container for sets of anagrams
     let mut anagramMap: HashMap<u64, Vec<usize>> = HashMap::new();
 
-    // An ordered index of anagram set keys 
+    // An ordered index of anagram set keys
     let mut index: Vec<u64> = Vec::new();
 
     // Read all words from dictionary into a word list
@@ -65,7 +68,7 @@ fn main() {
                 Some(anagramSet) => {
                     // Found: Append it to the existing anagram set
                     anagramSet.push(wordNo);
-                },
+                }
                 None => {
                     // Not found: Add it to the map as start of new anagram set.
                     let mut anagramSet: Vec<usize> = Vec::new();
@@ -94,14 +97,13 @@ fn main() {
                     }
                     output = output + "\n";
                 }
-            },
+            }
             _ => (),
         }
     }
-    
+
     match stdoutHandle.write_all(output.as_bytes()) {
         Ok(()) => (),
         Err(e) => println!("Error writing reult {}", e),
     }
 }
-

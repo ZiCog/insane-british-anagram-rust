@@ -3,14 +3,14 @@
 //                               Words sourced from Debian's british-english-insane dictionary
 //
 // heater - 2019-07-30
-// 
+//
 
 #![allow(non_snake_case)]
 
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;
 use std::io::{self, Write};
-use std::collections::HashMap;
 
 struct SliceSpec {
     begin: usize,
@@ -23,19 +23,22 @@ fn readInsaneBritishDictionary(mut dictionary: &mut Vec<u8>) -> std::io::Result<
     return Ok(());
 }
 
-fn primeHash (slice: &[u8]) -> u64 {
+fn primeHash(slice: &[u8]) -> u64 {
     // One prime number for each lower case letter of the alphabet
-    let primes: [u64; 26] = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101];
+    let primes: [u64; 26] = [
+        2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
+        97, 101,
+    ];
 
-    let mut hash : u64 = 1;
+    let mut hash: u64 = 1;
     for c in slice {
-        let index = (c -  97) as usize;  
+        let index = (c - 97) as usize;
         hash = hash.wrapping_mul(primes[index]);
     }
     return hash;
 }
 
-fn isLowerCase (c : &u8) -> bool {
+fn isLowerCase(c: &u8) -> bool {
     if (*c < 'a' as u8) || (*c > 'z' as u8) {
         return false;
     } else {
@@ -47,11 +50,11 @@ fn insaneBritishAnagram() {
     let stdout = io::stdout();
     let mut stdoutHandle = stdout.lock();
 
-    // Map container for sets of anagrams 
+    // Map container for sets of anagrams
     // An anagram set is simply a vector of pointers to word strings
     let mut anagramMap: HashMap<u64, Vec<SliceSpec>> = HashMap::new();
 
-    // An ordered index of anagram set keys 
+    // An ordered index of anagram set keys
     let mut index: Vec<u64> = Vec::new();
 
     let mut dictionary = Vec::new();
@@ -60,7 +63,7 @@ fn insaneBritishAnagram() {
             let mut wordIndex = 0;
             let mut characterIndex = 0;
             let mut reject = false;
-            for c in &dictionary  {
+            for c in &dictionary {
                 if isLowerCase(&c) {
                     // We are scanning a valid word
                     characterIndex = characterIndex + 1;
@@ -68,15 +71,18 @@ fn insaneBritishAnagram() {
                     // We have hit the end of a word, use the word if it's valid
                     if !reject {
                         // Do we have a word with this key (potential anagram)?
-                        let word = &dictionary[wordIndex .. characterIndex];
+                        let word = &dictionary[wordIndex..characterIndex];
                         let hash = primeHash(&word);
                         //let string = String::from_utf8_lossy(&word).to_string();
-                        let wordSpec = SliceSpec {begin: wordIndex, end:characterIndex}; 
+                        let wordSpec = SliceSpec {
+                            begin: wordIndex,
+                            end: characterIndex,
+                        };
                         match anagramMap.get_mut(&hash) {
                             Some(anagramSet) => {
                                 // Found: Append it to the existing anagram set
                                 anagramSet.push(wordSpec);
-                            },
+                            }
                             None => {
                                 // Not found: Add it to the map as start of new anagram set.
                                 let mut anagramSet: Vec<SliceSpec> = Vec::new();
@@ -103,12 +109,12 @@ fn insaneBritishAnagram() {
                 match anagramMap.get(&hash) {
                     Some(anagramSet) => {
                         if anagramSet.len() > 1 {
-                            let mut slice = &dictionary[anagramSet[0].begin .. anagramSet[0].end];
+                            let mut slice = &dictionary[anagramSet[0].begin..anagramSet[0].end];
                             let mut word = String::from_utf8_lossy(&slice).to_string();
                             output = output + &word;
                             let mut separator = ": ";
                             for wordSlice in &anagramSet[1..] {
-                                slice = &dictionary[wordSlice.begin .. wordSlice.end];
+                                slice = &dictionary[wordSlice.begin..wordSlice.end];
                                 word = String::from_utf8_lossy(&slice).to_string();
                                 output = output + &separator;
                                 output = output + &word;
@@ -116,7 +122,7 @@ fn insaneBritishAnagram() {
                             }
                             output = output + "\n";
                         }
-                    },
+                    }
                     _ => (),
                 }
             }
@@ -125,15 +131,13 @@ fn insaneBritishAnagram() {
                 Ok(()) => (),
                 Err(e) => println!("Error writing reult {}", e),
             }
-
-        },
+        }
         Err(e) => {
             println!("Error reading dictionary: {}", e);
         }
     }
 }
 
-fn main () {
+fn main() {
     insaneBritishAnagram();
 }
-

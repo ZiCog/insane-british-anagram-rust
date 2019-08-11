@@ -5,23 +5,15 @@
 // heater - 2019-07-29
 // 
 
-#![allow(non_snake_case)]
+//![allow(non_snake_case)]
 
 use std::fs::File;
 use std::io::{self, Write};
 use std::collections::HashMap;
 use std::io::{BufReader,BufRead};
 
-// Calculates n!
-fn factorial(n: usize) -> Int {
-   let mut a = Int::from(1);
-
-   for i in 2..n {
-       a *= i;
-   }
-
-   return a * n;
-}
+extern crate ramp;
+use ramp::Int;
 
 fn validWord (word : &String) -> bool {
     let bytes = word.as_bytes();
