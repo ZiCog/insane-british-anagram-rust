@@ -110,12 +110,12 @@ fn insaneBritishAnagram() {
                     Some(anagramSet) => {
                         if anagramSet.len() > 1 {
                             let mut slice = &dictionary[anagramSet[0].begin..anagramSet[0].end];
-                            let mut word = String::from_utf8_lossy(&slice).to_string();
+                            let mut word = String::from_utf8_lossy(&slice);
                             output = output + &word;
                             let mut separator = ": ";
                             for wordSlice in &anagramSet[1..] {
                                 slice = &dictionary[wordSlice.begin..wordSlice.end];
-                                word = String::from_utf8_lossy(&slice).to_string();
+                                word = String::from_utf8_lossy(&slice);
                                 output = output + &separator;
                                 output = output + &word;
                                 separator = ", ";
