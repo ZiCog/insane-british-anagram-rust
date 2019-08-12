@@ -8,11 +8,19 @@
 //      https://users.rust-lang.org/t/writing-a-213-byte-webassembly-graphics-demo-with-rust/29099
 //      http://cliffle.com/blog/bare-metal-wasm/
 
+
+#![feature(test)]
+
+
 #[cfg(unix)]
 extern crate jemallocator;
 #[cfg(unix)]
 #[global_allocator]
 static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
+
+
+extern crate test;
 
 use arrayvec::ArrayVec;
 use hashbrown::HashMap; // Google's faster HashMap
@@ -200,11 +208,17 @@ fn main() {
             let output = anagrams(&dictionary);
             let mut end = Instant::now();
             let mut elapsed = end - start;
-            eprintln!("{}ms", elapsed.as_nanos() / 1000_000);
+            eprintln!("Run 1: {}ms", elapsed.as_nanos() / 1000_000);
+
+            let mut start2 = Instant::now();
+            let output2 = anagrams(&dictionary);
+            let mut end2 = Instant::now();
+            let mut elapsed2 = end2 - start2;
+            eprintln!("Run 2: {}ms", elapsed2.as_nanos() / 1000_000);
 
             let stdout = io::stdout();
             let mut stdout_handle = stdout.lock();
-            match stdout_handle.write_all(output.as_bytes()) {
+            match stdout_handle.write_all(output2.as_bytes()) {
                 Ok(()) => {}
                 Err(e) => eprintln!("Error writing reult {}", e),
             }
@@ -212,5 +226,20 @@ fn main() {
         Err(e) => {
             eprintln!("Error reading dictionary: {}", e);
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use test::Bencher;
+
+
+    #[bench]
+    fn bench_anagrams(b: &mut Bencher) {
+        let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
+        b.iter( || {
+            anagrams(&dictionary)
+        });
     }
 }
