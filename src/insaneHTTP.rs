@@ -7,9 +7,8 @@ mod lib;
 
 
 fn main() {
-    let listener = TcpListener::bind("127.0.0.1:9000").unwrap();
+    let listener = TcpListener::bind("0.0.0.0:9000").unwrap();
     let pool = lib::ThreadPool::new(4);
-
     for stream in listener.incoming() {
         let stream = stream.unwrap();
 
@@ -85,7 +84,7 @@ fn handle_connection(mut stream: TcpStream) {
         let h2 = "Server: InsaneHTTP/0.0.1 Rust\r\n";
         let h3 = "Date: Sun, 11 Aug 2019 13:57:08 GMT\r\n";
         let h4 = "Content-type: application/wasm\r\n";
-        let h5 = "Content-Length: 56576\r\n";
+        let h5 = "Content-Length: 66043\r\n";
         let h6 = "Last-Modified: Sun, 11 Aug 2019 13:43:57 GMT\r\n";
 
         let response = format!("{}{}{}{}{}{}\r\n", h1, h2, h3, h4, h5, h6);
