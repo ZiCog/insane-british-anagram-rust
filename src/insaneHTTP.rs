@@ -35,7 +35,7 @@ fn handle_connection(mut stream: TcpStream) {
     if buffer.starts_with(get_index) {
         let contents = fs::read_to_string("www/index.html").unwrap();
 
-        let h1 = "HTTP/1.0 200 OK\r\n".to_string();
+        let h1 = "HTTP/1.0 200 OK\r\n";
         let h2 = "Server: InsaneHTTP/0.0.1 Rust\r\n";
         let h3 = "Date: Sun, 11 Aug 2019 13:57:08 GMT\r\n";
         let h4 = "Content-type: text/html\r\n";
@@ -49,12 +49,13 @@ fn handle_connection(mut stream: TcpStream) {
     } else if buffer.starts_with(get_css) {
         println!("\nCSS requested.");
         let contents = fs::read_to_string("www/bootstrap.min.css").unwrap();
+        let length = contents.len();
 
-        let h1 = "HTTP/1.0 200 OK\r\n".to_string();
+        let h1 = "HTTP/1.0 200 OK\r\n";
         let h2 = "Server: InsaneHTTP/0.0.1 Rust\r\n";
         let h3 = "Date: Sun, 11 Aug 2019 13:57:08 GMT\r\n";
         let h4 = "Content-type: text/css\r\n";
-        let h5 = "Content-Length: 5317\r\n";
+        let h5 = format!("Content-Length: {}\r\n", length);
         let h6 = "Last-Modified: Sun, 11 Aug 2019 13:43:57 GMT\r\n";
 
         let response = format!("{}{}{}{}{}{}\r\n\r\n{}", h1, h2, h3, h4, h5, h6, contents);
@@ -65,7 +66,7 @@ fn handle_connection(mut stream: TcpStream) {
         println!("\nJS requested.");
         let contents = fs::read_to_string("www/insane-british-anagram.js").unwrap();
 
-        let h1 = "HTTP/1.0 200 OK\r\n".to_string();
+        let h1 = "HTTP/1.0 200 OK\r\n";
         let h2 = "Server: InsaneHTTP/0.0.1 Rust\r\n";
         let h3 = "Date: Sun, 11 Aug 2019 13:57:08 GMT\r\n";
         let h4 = "Content-type: application/javascript\r\n";
@@ -79,12 +80,13 @@ fn handle_connection(mut stream: TcpStream) {
     } else if buffer.starts_with(get_wasm) {
         println!("\nWASM requested.");
         let contents = fs::read("www/insane-british-anagram_bg.wasm").unwrap();
+        let length = contents.len();
 
-        let h1 = "HTTP/1.0 200 OK\r\n".to_string();
+        let h1 = "HTTP/1.0 200 OK\r\n";
         let h2 = "Server: InsaneHTTP/0.0.1 Rust\r\n";
         let h3 = "Date: Sun, 11 Aug 2019 13:57:08 GMT\r\n";
         let h4 = "Content-type: application/wasm\r\n";
-        let h5 = "Content-Length: 66043\r\n";
+        let h5 = format!("Content-Length: {}\r\n", length);
         let h6 = "Last-Modified: Sun, 11 Aug 2019 13:43:57 GMT\r\n";
 
         let response = format!("{}{}{}{}{}{}\r\n", h1, h2, h3, h4, h5, h6);
@@ -96,7 +98,7 @@ fn handle_connection(mut stream: TcpStream) {
         println!("\nDictionary requested.");
         let contents = fs::read("www/british-english-insane.txt").unwrap();
 
-        let h1 = "HTTP/1.0 200 OK\r\n".to_string();
+        let h1 = "HTTP/1.0 200 OK\r\n";
         let h2 = "Server: InsaneHTTP/0.0.1 Rust\r\n";
         let h3 = "Date: Sun, 11 Aug 2019 13:57:08 GMT\r\n";
         let h4 = "Content-type: text/html\r\n";
