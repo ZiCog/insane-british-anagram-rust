@@ -7,6 +7,12 @@
 
 #![allow(non_snake_case)]
 
+#[cfg(unix)]
+extern crate jemallocator;
+#[cfg(unix)]
+#[global_allocator]
+static ALLOC: jemallocator::Jemalloc = jemallocator::Jemalloc;
+
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Read;

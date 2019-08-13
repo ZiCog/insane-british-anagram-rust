@@ -13,7 +13,6 @@ pub struct ThreadPool {
     sender: mpsc::Sender<Message>,
 }
 
-
 // use of FnBox here is a workaround for a missing compiler feature (comming soon)
 trait FnBox {
     fn call_box(self: Box<Self>);

@@ -24,6 +24,8 @@ use arrayvec::ArrayVec;
 use hashbrown::HashMap; // Google's faster HashMap
 use std::io::{self, Write};
 use std::time::{Duration, Instant};
+
+#[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
 
 #[derive(Copy, Clone)]
@@ -174,6 +176,7 @@ pub fn anagrams(dictionary: &[u8]) -> String {
     output
 }
 
+#[cfg(target_arch = "wasm32")]
 #[wasm_bindgen]
 pub fn anagrams_html(s: String) -> String {
     let output: String = anagrams(s.as_bytes());
@@ -206,17 +209,7 @@ fn main() {
             let output = anagrams(&dictionary);
             let mut end = Instant::now();
             let mut elapsed = end - start;
-            eprintln!("Run    1: {}ms", elapsed.as_nanos() / 1000_000);
-            let digest = md5::compute(&output);
-            eprintln!("Digest 1: {:x}", digest);
-
-            let mut start2 = Instant::now();
-            let output2 = anagrams(&dictionary);
-            let mut end2 = Instant::now();
-            let mut elapsed2 = end2 - start2;
-            eprintln!("Run    2: {}ms", elapsed2.as_nanos() / 1000_000);
-            let digest2 = md5::compute(&output2);
-            eprintln!("Digest 2: {:x}", digest2);
+            //eprintln!("Run    1: {}ms", elapsed.as_nanos() / 1000_000);
 
             let stdout = io::stdout();
             let mut stdout_handle = stdout.lock();
@@ -240,6 +233,7 @@ mod tests {
     fn bench_anagrams(b: &mut Bencher) {
         let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
         b.iter( || {
+            let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
             anagrams(&dictionary)
         });
     }
