@@ -1,0 +1,11 @@
+[Service]
+Type=simple
+Restart=always
+RestartSec=10
+User=root
+WorkingDirectory=/home/michael/insane-british-anagram-rust
+ExecStart=/home/michael/insane-british-anagram-rust/target/release/insane_http 
+
+[Install]
+WantedBy=multi-user.target
+
