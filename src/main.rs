@@ -23,7 +23,7 @@ extern crate test;
 use arrayvec::ArrayVec;
 use hashbrown::HashMap; // Google's faster HashMap
 use std::io::{self, Write};
-use std::time::{Duration, Instant};
+use std::time::{Instant};
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -205,10 +205,10 @@ fn main() {
     match std::fs::read("/usr/share/dict/british-english-insane") {
         // Takes 25ms on PC
         Ok(dictionary) => {
-            let mut start = Instant::now();
+            let start = Instant::now();
             let output = anagrams(&dictionary);
-            let mut end = Instant::now();
-            let mut elapsed = end - start;
+            let end = Instant::now();
+            let _elapsed = end - start;
             //eprintln!("Run    1: {}ms", elapsed.as_nanos() / 1000_000);
 
             let stdout = io::stdout();
@@ -231,7 +231,7 @@ mod tests {
 
     #[bench]
     fn bench_anagrams(b: &mut Bencher) {
-        let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
+        let _dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
         b.iter( || {
             let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
             anagrams(&dictionary)

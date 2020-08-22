@@ -48,6 +48,7 @@ time = "0.1"
 wasm-bindgen = "0.2.67"
 arrayvec = "0.4.11"
 md5 = "*"
+rustfix = "0.5.1"
 
 [target.'cfg(unix)'.dependencies]
 jemallocator = "0.3.0"

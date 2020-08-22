@@ -34,21 +34,21 @@ struct AnagramSet {
 
 impl AnagramSet {
     fn new(word: SliceSpec) -> AnagramSet {
-        return AnagramSet {
+        AnagramSet {
             wordSlices: [word; 17],
             size: 1,
-        };
+        }
     }
     fn push(&mut self, slice: SliceSpec) {
         self.wordSlices[self.size] = slice;
-        self.size = self.size + 1;
+        self.size += 1;
     }
 }
 
 fn readInsaneBritishDictionary(mut dictionary: &mut Vec<u8>) -> std::io::Result<()> {
     let mut file = File::open("/usr/share/dict/british-english-insane")?;
     file.read_to_end(&mut dictionary)?;
-    return Ok(());
+    Ok(())
 }
 
 fn primeHash(slice: &[u8]) -> u64 {
@@ -63,15 +63,11 @@ fn primeHash(slice: &[u8]) -> u64 {
         let index = (c - 97) as usize;
         hash = hash.wrapping_mul(primes[index]);
     }
-    return hash;
+    hash
 }
 
 fn isLowerCase(c: &u8) -> bool {
-    if (*c < 'a' as u8) || (*c > 'z' as u8) {
-        return false;
-    } else {
-        return true;
-    }
+    !((*c < b'a') || (*c > b'z'))
 }
 
 fn anagrams() {
@@ -100,8 +96,8 @@ fn anagrams() {
             for c in &dictionary {
                 if isLowerCase(&c) {
                     // We are scanning a valid word
-                    characterIndex = characterIndex + 1;
-                } else if *c == '\n' as u8 {
+                    characterIndex += 1;
+                } else if *c == b'\n' {
                     // We have hit the end of a word, use the word if it's valid
                     if !reject {
                         // Do we have a word with this key (potential anagram)?
@@ -125,20 +121,20 @@ fn anagrams() {
                                 // Add the new anagram set to our list of anagram sets
                                 anagramSets.push(anagramSet);
                                 anagramMap.insert(hash, anagramSetsCount);
-                                anagramSetsCount = anagramSetsCount + 1;
+                                anagramSetsCount += 1;
 
                                 // And add the new anagram set to index
                                 index.push(hash);
                             }
                         }
                     }
-                    characterIndex = characterIndex + 1;
+                    characterIndex += 1;
                     wordIndex = characterIndex;
                     reject = false;
                 } else {
                     // Invalid character
                     reject = true;
-                    characterIndex = characterIndex + 1;
+                    characterIndex += 1;
                 }
             }
 
@@ -163,9 +159,9 @@ fn anagrams() {
                                 } else {
                                     separator = ", ";
                                 }
-                                i = i + 1;
+                                i += 1;
                             }
-                            output = output + "\n";
+                            output += "\n";
                         }
                     }
                     _ => (),

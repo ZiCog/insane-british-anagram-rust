@@ -21,11 +21,11 @@ use std::io::{BufRead, BufReader};
 fn validWord(word: &String) -> bool {
     let bytes = word.as_bytes();
     for c in bytes {
-        if (*c < 'a' as u8) || (*c > 'z' as u8) {
+        if (*c < b'a') || (*c > b'z') {
             return false;
         }
     }
-    return true;
+    true
 }
 
 fn primeHash(word: &String) -> u64 {
@@ -41,7 +41,7 @@ fn primeHash(word: &String) -> u64 {
         let index = (c - 97) as usize;
         hash = hash.wrapping_mul(primes[index])
     }
-    return hash;
+    hash
 }
 
 fn main() {
@@ -86,7 +86,7 @@ fn main() {
                 }
             }
         }
-        wordNo = wordNo + 1;
+        wordNo += 1;
     }
 
     let mut output: String = "".to_string();
@@ -101,7 +101,7 @@ fn main() {
                         output = output + &words[*wordNo];
                         separator = ", ";
                     }
-                    output = output + "\n";
+                    output += "\n";
                 }
             }
             _ => (),

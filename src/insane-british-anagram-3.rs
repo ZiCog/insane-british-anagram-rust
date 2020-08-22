@@ -25,7 +25,7 @@ struct SliceSpec {
 fn readInsaneBritishDictionary(mut dictionary: &mut Vec<u8>) -> std::io::Result<()> {
     let mut file = File::open("/usr/share/dict/british-english-insane")?;
     file.read_to_end(&mut dictionary)?;
-    return Ok(());
+    Ok(())
 }
 
 fn primeHash(slice: &[u8]) -> u64 {
@@ -40,15 +40,11 @@ fn primeHash(slice: &[u8]) -> u64 {
         let index = (c - 97) as usize;
         hash = hash.wrapping_mul(primes[index]);
     }
-    return hash;
+    hash
 }
 
 fn isLowerCase(c: &u8) -> bool {
-    if (*c < 'a' as u8) || (*c > 'z' as u8) {
-        return false;
-    } else {
-        return true;
-    }
+    !((*c < b'a') || (*c > b'z'))
 }
 
 fn insaneBritishAnagram() {
@@ -71,8 +67,8 @@ fn insaneBritishAnagram() {
             for c in &dictionary {
                 if isLowerCase(&c) {
                     // We are scanning a valid word
-                    characterIndex = characterIndex + 1;
-                } else if *c == '\n' as u8 {
+                    characterIndex += 1;
+                } else if *c == b'\n' {
                     // We have hit the end of a word, use the word if it's valid
                     if !reject {
                         // Do we have a word with this key (potential anagram)?
@@ -99,13 +95,13 @@ fn insaneBritishAnagram() {
                             }
                         }
                     }
-                    characterIndex = characterIndex + 1;
+                    characterIndex += 1;
                     wordIndex = characterIndex;
                     reject = false;
                 } else {
                     // Invalid character
                     reject = true;
-                    characterIndex = characterIndex + 1;
+                    characterIndex += 1;
                 }
             }
 
@@ -125,7 +121,7 @@ fn insaneBritishAnagram() {
                                 output = output + &word;
                                 separator = ", ";
                             }
-                            output = output + "\n";
+                            output += "\n";
                         }
                     }
                     _ => (),
