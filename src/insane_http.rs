@@ -21,7 +21,7 @@ fn main() {
 fn handle_connection(mut stream: TcpStream) {
     let mut buffer = [0; 512];
 
-    stream.read(&mut buffer).unwrap();
+    let _length = stream.read(&mut buffer).unwrap();
 
     println!("Request*: {}", String::from_utf8_lossy(&buffer[..]));
 
@@ -43,7 +43,7 @@ fn handle_connection(mut stream: TcpStream) {
 
         let response = format!("{}{}{}{}{}{}\r\n\r\n{}", h1, h2, h3, h4, h5, h6, contents);
 
-        stream.write(response.as_bytes()).unwrap();
+        stream.write_all(response.as_bytes()).unwrap();
         stream.flush().unwrap();
     } else if buffer.starts_with(get_css) {
         println!("\nCSS requested.");
@@ -58,7 +58,7 @@ fn handle_connection(mut stream: TcpStream) {
 
         let response = format!("{}{}{}{}{}{}\r\n\r\n{}", h1, h2, h3, h4, h5, h6, contents);
 
-        stream.write(response.as_bytes()).unwrap();
+        stream.write_all(response.as_bytes()).unwrap();
         stream.flush().unwrap();
     } else if buffer.starts_with(get_js) {
         println!("\nJS requested.");
@@ -73,7 +73,7 @@ fn handle_connection(mut stream: TcpStream) {
 
         let response = format!("{}{}{}{}{}{}\r\n\r\n{}", h1, h2, h3, h4, h5, h6, contents);
 
-        stream.write(response.as_bytes()).unwrap();
+        stream.write_all(response.as_bytes()).unwrap();
         stream.flush().unwrap();
     } else if buffer.starts_with(get_wasm) {
         println!("\nWASM requested.");
@@ -88,8 +88,8 @@ fn handle_connection(mut stream: TcpStream) {
 
         let response = format!("{}{}{}{}{}{}\r\n", h1, h2, h3, h4, h5, h6);
 
-        stream.write(response.as_bytes()).unwrap();
-        stream.write(&contents).unwrap();
+        stream.write_all(response.as_bytes()).unwrap();
+        stream.write_all(&contents).unwrap();
         stream.flush().unwrap();
     } else if buffer.starts_with(get_dict) {
         println!("\nDictionary requested.");
@@ -104,8 +104,8 @@ fn handle_connection(mut stream: TcpStream) {
 
         let response = format!("{}{}{}{}{}{}\r\n", h1, h2, h3, h4, h5, h6);
 
-        stream.write(response.as_bytes()).unwrap();
-        stream.write(&contents).unwrap();
+        stream.write_all(response.as_bytes()).unwrap();
+        stream.write_all(&contents).unwrap();
         stream.flush().unwrap();
     } else {
         let status_line = "HTTP/1.1 404 NOT FOUND\r\n\r\n";
@@ -113,7 +113,7 @@ fn handle_connection(mut stream: TcpStream) {
 
         let response = format!("{}{}", status_line, contents);
 
-        stream.write(response.as_bytes()).unwrap();
+        stream.write_all(response.as_bytes()).unwrap();
         stream.flush().unwrap();
     }
 }

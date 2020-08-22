@@ -18,7 +18,7 @@ use std::fs::File;
 use std::io::{self, Write};
 use std::io::{BufRead, BufReader};
 
-fn validWord(word: &String) -> bool {
+fn validWord(word: &str) -> bool {
     let bytes = word.as_bytes();
     for c in bytes {
         if (*c < b'a') || (*c > b'z') {
@@ -28,7 +28,7 @@ fn validWord(word: &String) -> bool {
     true
 }
 
-fn primeHash(word: &String) -> u64 {
+fn primeHash(word: &str) -> u64 {
     // One prime number for each lower case letter of the alphabet
     let primes: [u64; 26] = [
         2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89,
@@ -64,8 +64,7 @@ fn main() {
         words.push(word);
     }
 
-    let mut wordNo = 0;
-    for word in &words {
+    for (wordNo, word) in words.iter().enumerate() {
         if validWord(&word) {
             let hash = primeHash(&word);
 
@@ -86,25 +85,21 @@ fn main() {
                 }
             }
         }
-        wordNo += 1;
     }
 
     let mut output: String = "".to_string();
     for hash in index {
-        match anagramMap.get(&hash) {
-            Some(anagramSet) => {
-                if anagramSet.len() > 1 {
-                    output = output + &words[anagramSet[0 as usize]];
-                    let mut separator = ": ";
-                    for wordNo in &anagramSet[1..] {
-                        output = output + &separator;
-                        output = output + &words[*wordNo];
-                        separator = ", ";
-                    }
-                    output += "\n";
+        if let Some(anagramSet) = anagramMap.get(&hash) {
+            if anagramSet.len() > 1 {
+                output = output + &words[anagramSet[0 as usize]];
+                let mut separator = ": ";
+                for wordNo in &anagramSet[1..] {
+                    output += separator;
+                    output = output + &words[*wordNo];
+                    separator = ", ";
                 }
+                output += "\n";
             }
-            _ => (),
         }
     }
 

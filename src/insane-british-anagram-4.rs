@@ -140,31 +140,28 @@ fn anagrams() {
 
             let mut output: String = "".to_string();
             for hash in index {
-                match anagramMap.get(&hash) {
-                    Some(AnagramSetsCount) => {
-                        let size = anagramSets[*AnagramSetsCount as usize].size;
-                        if size > 1 {
-                            let mut separator = "";
-                            let mut i = 0;
-                            while i < size {
-                                let begin = anagramSets[*AnagramSetsCount].wordSlices[i].begin;
-                                let end = anagramSets[*AnagramSetsCount].wordSlices[i].end;
-                                let slice = &dictionary[begin..end];
-                                let word = String::from_utf8_lossy(&slice).to_string();
-                                output = output + &separator;
-                                output = output + &word;
+                if let Some(AnagramSetsCount) = anagramMap.get(&hash) {
+                    let size = anagramSets[*AnagramSetsCount as usize].size;
+                    if size > 1 {
+                        let mut separator = "";
+                        let mut i = 0;
+                        while i < size {
+                            let begin = anagramSets[*AnagramSetsCount].wordSlices[i].begin;
+                            let end = anagramSets[*AnagramSetsCount].wordSlices[i].end;
+                            let slice = &dictionary[begin..end];
+                            let word = String::from_utf8_lossy(&slice).to_string();
+                            output += separator;
+                            output = output + &word;
 
-                                if i == 0 {
-                                    separator = ": ";
-                                } else {
-                                    separator = ", ";
-                                }
-                                i += 1;
+                            if i == 0 {
+                                separator = ": ";
+                            } else {
+                                separator = ", ";
                             }
-                            output += "\n";
+                            i += 1;
                         }
+                        output += "\n";
                     }
-                    _ => (),
                 }
             }
 

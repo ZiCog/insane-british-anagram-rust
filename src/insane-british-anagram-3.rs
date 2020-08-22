@@ -107,24 +107,21 @@ fn insaneBritishAnagram() {
 
             let mut output: String = "".to_string();
             for hash in index {
-                match anagramMap.get(&hash) {
-                    Some(anagramSet) => {
-                        if anagramSet.len() > 1 {
-                            let mut slice = &dictionary[anagramSet[0].begin..anagramSet[0].end];
-                            let mut word = String::from_utf8_lossy(&slice);
+                if let Some(anagramSet) = anagramMap.get(&hash) {
+                    if anagramSet.len() > 1 {
+                        let mut slice = &dictionary[anagramSet[0].begin..anagramSet[0].end];
+                        let mut word = String::from_utf8_lossy(&slice);
+                        output = output + &word;
+                        let mut separator = ": ";
+                        for wordSlice in &anagramSet[1..] {
+                            slice = &dictionary[wordSlice.begin..wordSlice.end];
+                            word = String::from_utf8_lossy(&slice);
+                            output += separator;
                             output = output + &word;
-                            let mut separator = ": ";
-                            for wordSlice in &anagramSet[1..] {
-                                slice = &dictionary[wordSlice.begin..wordSlice.end];
-                                word = String::from_utf8_lossy(&slice);
-                                output = output + &separator;
-                                output = output + &word;
-                                separator = ", ";
-                            }
-                            output += "\n";
+                            separator = ", ";
                         }
+                        output += "\n";
                     }
-                    _ => (),
                 }
             }
 

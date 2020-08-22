@@ -100,20 +100,17 @@ fn main() {
 
             let mut output: String = "".to_string();
             for hash in index {
-                match anagramMap.get(&hash) {
-                    Some(anagramSet) => {
-                        if anagramSet.len() > 1 {
-                            output = output + &anagramSet[0];
-                            let mut separator = ": ";
-                            for word in &anagramSet[1..] {
-                                output = output + &separator;
-                                output = output + &word;
-                                separator = ", ";
-                            }
-                            output += "\n";
+                if let Some(anagramSet) = anagramMap.get(&hash) {
+                    if anagramSet.len() > 1 {
+                        output = output + &anagramSet[0];
+                        let mut separator = ": ";
+                        for word in &anagramSet[1..] {
+                            output += separator;
+                            output = output + &word;
+                            separator = ", ";
                         }
+                        output += "\n";
                     }
-                    _ => (),
                 }
             }
             match stdoutHandle.write_all(output.as_bytes()) {
