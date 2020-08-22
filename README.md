@@ -12,8 +12,11 @@ This is my first ever Rust program. You will find a number of different attempts
     $ sudo apt-get install make
     $ curl https://sh.rustup.rs -sSf | sh
     $ source $HOME/.cargo/env
-    $ cargo install wasm-bindgen-cli
+    $ cargo install wasm-bindgen-cli --version 0.2.67
     $ rustup target add wasm32-unknown-unknown
+
+Note: The version of wasm-bindgen-cli must match the version of wasm-bingen specified in Cargo.toml. Be sure to change both if upgrading.
+
 
 ## Build
 
@@ -39,7 +42,7 @@ Under node.js
 
 As a web page:
 
-    $ python3 server.py
+    $ ./target/release/insane_http
     
 And visit http://localhost:9000/www/
 
