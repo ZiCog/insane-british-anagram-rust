@@ -1,10 +1,9 @@
+use std::fs;
+use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
-use std::io::prelude::*;
-use std::fs;
 
 mod lib;
-
 
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:9000").unwrap();

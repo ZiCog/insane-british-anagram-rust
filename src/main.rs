@@ -8,9 +8,7 @@
 //      https://users.rust-lang.org/t/writing-a-213-byte-webassembly-graphics-demo-with-rust/29099
 //      http://cliffle.com/blog/bare-metal-wasm/
 
-
 #![feature(test)]
-
 
 #[cfg(unix)]
 extern crate jemallocator;
@@ -23,7 +21,7 @@ extern crate test;
 use arrayvec::ArrayVec;
 use hashbrown::HashMap; // Google's faster HashMap
 use std::io::{self, Write};
-use std::time::{Instant};
+use std::time::Instant;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -232,7 +230,7 @@ mod tests {
     #[bench]
     fn bench_anagrams(b: &mut Bencher) {
         let _dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
-        b.iter( || {
+        b.iter(|| {
             let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
             anagrams(&dictionary)
         });
