@@ -1,5 +1,5 @@
 {
-  "name": "nodejs",
+  "name": "insane_british_anagram",
   "version": "1.0.0",
   "description": "Runs the insane-british-anagram-rust compiled to wasm.",
   "main": "index.js",

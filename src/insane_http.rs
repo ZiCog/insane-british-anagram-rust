@@ -3,7 +3,6 @@ use std::io::prelude::*;
 use std::net::TcpListener;
 use std::net::TcpStream;
 
-//use insane_british_anagram::threadpool::ThreadPool;
 use insane_british_anagram::thread_pool::ThreadPool;
 fn main() {
     let listener = TcpListener::bind("0.0.0.0:9000").unwrap();
