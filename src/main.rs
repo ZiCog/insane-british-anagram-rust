@@ -21,7 +21,6 @@ extern crate test;
 use arrayvec::ArrayVec;
 use hashbrown::HashMap; // Google's faster HashMap
 use std::io::{self, Write};
-use std::time::Instant;
 
 #[cfg(target_arch = "wasm32")]
 use wasm_bindgen::prelude::*;
@@ -185,30 +184,13 @@ pub fn anagrams_html(s: String) -> String {
 #[cfg(target_arch = "wasm32")]
 #[wasm_bindgen(start)]
 pub fn start() -> Result<(), JsValue> {
-    // Use `web_sys`'s global `window` function to get a handle on the global
-    // window object.
-    //let window = web_sys::window().expect("no global `window` exists");
-    //let document = window.document().expect("should have a document on window");
-    //let body = document.body().expect("document should have a body");
-
-    // Manufacture the element we're gonna append
-    //let val = document.create_element("p")?;
-    //val.set_inner_html("Hello from Rust!");
-    //body.append_child(&val)?;
-
     Ok(())
 }
 
 fn main() {
     match std::fs::read("/usr/share/dict/british-english-insane") {
-        // Takes 25ms on PC
         Ok(dictionary) => {
-            let start = Instant::now();
             let output = anagrams(&dictionary);
-            let end = Instant::now();
-            let _elapsed = end - start;
-            //eprintln!("Run    1: {}ms", elapsed.as_nanos() / 1000_000);
-
             let stdout = io::stdout();
             let mut stdout_handle = stdout.lock();
             match stdout_handle.write_all(output.as_bytes()) {
@@ -229,10 +211,7 @@ mod tests {
 
     #[bench]
     fn bench_anagrams(b: &mut Bencher) {
-        let _dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
-        b.iter(|| {
-            let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
-            anagrams(&dictionary)
-        });
+        let dictionary = std::fs::read("/usr/share/dict/british-english-insane").unwrap();
+        b.iter(|| anagrams(test::black_box(&dictionary)));
     }
 }
